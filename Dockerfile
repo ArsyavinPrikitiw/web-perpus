@@ -1,15 +1,44 @@
-# Stage 1: Build Frontend Assets
-FROM node:22-alpine AS frontend
+# Stage 1: Build PHP dependencies and Frontend Assets
+FROM dunglas/frankenphp:1-php8.4-alpine AS builder
+
+# Install Node.js, npm, and PHP extensions required for build and Wayfinder
+RUN apk add --no-cache nodejs npm \
+    && install-php-extensions \
+        pcntl \
+        pdo_mysql \
+        pdo_pgsql \
+        pdo_sqlite \
+        bcmath \
+        zip \
+        intl \
+        opcache \
+        redis
+
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
 WORKDIR /app
-COPY package*.json ./
+
+# Copy dependency definition files first for efficient caching
+COPY composer.json composer.lock package*.json ./
+
+# Install PHP dependencies without dev packages
+RUN composer install --no-dev --no-interaction --prefer-dist --no-scripts
+
+# Install npm dependencies
 RUN npm install
+
+# Copy application source code
 COPY . .
+
+# Complete composer autoload and package discovery (required for artisan wayfinder:generate)
+RUN composer dump-autoload --optimize
+
+# Build frontend assets (now PHP and artisan are present for Wayfinder)
 RUN npm run build
 
-# Stage 2: Production PHP Application Server (FrankenPHP)
+# Stage 2: Production Server
 FROM dunglas/frankenphp:1-php8.4-alpine AS runner
 
-# Install necessary PHP extensions for Laravel
 RUN install-php-extensions \
     pcntl \
     pdo_mysql \
@@ -26,17 +55,13 @@ ENV COMPOSER_ALLOW_SUPERUSER=1
 
 WORKDIR /app
 
-# Copy Composer binary
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Copy application files
-COPY . .
+# Copy application from builder (including vendor/ and public/build/)
+COPY --from=builder /app /app
 
-# Copy compiled frontend assets from frontend stage
-COPY --from=frontend /app/public/build ./public/build
-
-# Install PHP dependencies without dev packages
-RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+# Remove node_modules to keep final image minimal
+RUN rm -rf /app/node_modules
 
 # Set up required directories and permissions
 RUN mkdir -p database storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
