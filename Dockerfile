@@ -1,12 +1,4 @@
-# Stage 1: Build Frontend Assets
-FROM node:22-alpine AS frontend
-WORKDIR /app
-COPY package*.json ./
-RUN npm install
-COPY . .
-RUN npm run build
-
-# Stage 2: Production PHP Application Server (FrankenPHP)
+# Production PHP Application Server (FrankenPHP) with frontend build
 FROM dunglas/frankenphp:1-php8.4-alpine AS runner
 
 # Install necessary PHP extensions for Laravel
@@ -21,6 +13,9 @@ RUN install-php-extensions \
     opcache \
     redis
 
+# Node is needed to build Vite assets (wayfinder requires PHP + vendor at build time)
+RUN apk add --no-cache nodejs npm
+
 ENV SERVER_NAME=":${PORT:-80}"
 ENV COMPOSER_ALLOW_SUPERUSER=1
 
@@ -32,11 +27,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Copy application files
 COPY . .
 
-# Copy compiled frontend assets from frontend stage
-COPY --from=frontend /app/public/build ./public/build
-
 # Install PHP dependencies without dev packages
 RUN composer install --no-dev --no-interaction --prefer-dist --optimize-autoloader
+
+# Build frontend assets (php artisan is now available for wayfinder:generate)
+RUN npm install && npm run build && rm -rf node_modules
 
 # Set up required directories and permissions
 RUN mkdir -p database storage/framework/cache/data storage/framework/sessions storage/framework/views storage/logs bootstrap/cache \
