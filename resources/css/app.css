@@ -1,0 +1,248 @@
+@import 'tailwindcss';
+
+@source '../views';
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+
+/* Mengaktifkan selektor Dark Mode class untuk Tailwind v4 */
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+    --font-sans:
+        'Instrument Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    --font-serif:
+        'Newsreader', 'Georgia', 'Cambria', 'Times New Roman', serif;
+    --font-mono:
+        'JetBrains Mono', 'Fira Code', 'Courier New', monospace;
+}
+
+:root {
+    --color-paper: #faf8f5;
+    --color-paper-card: #ffffff;
+    --color-paper-subtle: #f3efe6;
+    --color-paper-muted: #e9e4d6;
+    --color-border: #ded7c6;
+    --color-border-subtle: #ebe6d8;
+    --color-ink: #191816;
+    --color-ink-muted: #646055;
+    --color-ink-subtle: #8e897d;
+    --color-accent: #164e3b;
+    --color-accent-hover: #0f392b;
+    --color-accent-subtle: #e8f3ee;
+    --color-amber: #b45309;
+    --color-amber-subtle: #fef3c7;
+    --color-crimson: #991b1b;
+    --color-crimson-subtle: #fee2e2;
+    --color-focus: #0f766e;
+}
+
+html, body {
+    overflow-x: clip;
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Typography purity: headings are upright roman */
+h1, h2, h3, h4, h5, h6 {
+    font-style: normal !important;
+}
+
+/* Barcode visual lines simulation */
+.barcode-strip {
+    background-image: repeating-linear-gradient(
+        90deg,
+        #191816 0px,
+        #191816 2px,
+        transparent 2px,
+        transparent 4px,
+        #191816 4px,
+        #191816 7px,
+        transparent 7px,
+        transparent 9px,
+        #191816 9px,
+        #191816 10px,
+        transparent 10px,
+        transparent 13px
+    );
+}
+
+/* ========================================================
+   DARK MODE STYLING SELURUH SISTEM PERPUSTAKAAN
+   ======================================================== */
+html.dark {
+    color-scheme: dark;
+}
+
+html.dark body {
+    background-color: #0b1120 !important;
+    color: #f1f5f9 !important;
+}
+
+/* Ubah semua kontainer warna krem/putih/terang menjadi gelap */
+html.dark .bg-white,
+html.dark [class*="bg-[#faf8f5]"],
+html.dark [class*="bg-[#faf8f3]"],
+html.dark [class*="bg-[#fdfbf7]"],
+html.dark [class*="bg-[#fbf9f5]"],
+html.dark [class*="bg-[#fbf9f4]"],
+html.dark [class*="bg-[#f7f5f0]"],
+html.dark [class*="bg-[#f8f4ea]"],
+html.dark [class*="bg-[#f5efe2]"],
+html.dark [class*="bg-[#f4eee1]"],
+html.dark [class*="bg-[#ede7d8]"],
+html.dark [class*="bg-[#ede8dc]"],
+html.dark [class*="bg-[#eae3d2]"],
+html.dark [class*="bg-[#f0e9db]"],
+html.dark [class*="bg-[#eadecc]"],
+html.dark aside,
+html.dark header {
+    background-color: #0f172a !important;
+    color: #f1f5f9 !important;
+}
+
+/* Sub-card dan nested panel yang lebih terang di mode terang, menjadi slate-800 di dark */
+html.dark [class*="bg-[#faf8f5]"] [class*="bg-white"],
+html.dark [class*="bg-[#0f172a]"] [class*="bg-white"],
+html.dark [class*="bg-[#0f172a]"] [class*="bg-[#faf8f5]"],
+html.dark [class*="bg-[#0f172a]"] [class*="bg-[#f4eee1]"],
+html.dark [class*="bg-[#0f172a]"] [class*="bg-[#ede7d8]"] {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+}
+
+/* Border menjadi gelap */
+html.dark [class*="border-[#ded7c4]"],
+html.dark [class*="border-[#d6cebc]"],
+html.dark [class*="border-[#ede7d8]"],
+html.dark [class*="border-[#ece6d5]"],
+html.dark [class*="border-[#e5decb]"],
+html.dark [class*="border-[#e4decb]"],
+html.dark [class*="border-[#ebe4d3]"],
+html.dark [class*="border-[#dcd4c2]"],
+html.dark [class*="border-[#e3e3e0]"],
+html.dark [class*="border-[#cfc7b4]"],
+html.dark [class*="border-[#f0ebd9]"],
+html.dark [class*="border-[#b5ac96]"],
+html.dark [class*="border-[#d8cfbe]"],
+html.dark .border-slate-200 {
+    border-color: #334155 !important;
+}
+
+/* Teks gelap menjadi terang */
+html.dark [class*="text-[#191816]"],
+html.dark [class*="text-[#454137]"],
+html.dark [class*="text-[#3d3a33]"],
+html.dark [class*="text-[#332f26]"] {
+    color: #f8fafc !important;
+}
+
+html.dark [class*="text-[#5c574c]"],
+html.dark [class*="text-[#6d6657]"],
+html.dark [class*="text-[#787161]"],
+html.dark [class*="text-[#736c5e]"],
+html.dark [class*="text-[#8a816e]"],
+html.dark [class*="text-[#666052]"],
+html.dark [class*="text-[#666051]"],
+html.dark [class*="text-[#5e584a]"],
+html.dark [class*="text-[#5e5748]"],
+html.dark [class*="text-[#4d483e]"],
+html.dark [class*="text-[#8c8574]"] {
+    color: #94a3b8 !important;
+}
+
+/* Styling Tabel di Dark Mode */
+html.dark table {
+    border-color: #334155 !important;
+}
+html.dark thead tr,
+html.dark thead th {
+    background-color: #1e293b !important;
+    color: #f1f5f9 !important;
+    border-color: #334155 !important;
+}
+html.dark tbody tr {
+    background-color: #0f172a !important;
+    border-color: #1e293b !important;
+    color: #e2e8f0 !important;
+}
+html.dark tbody tr:hover {
+    background-color: #1e293b !important;
+}
+
+/* Input Form, Select, Textarea di Dark Mode */
+html.dark input:not([type="checkbox"]):not([type="radio"]):not([type="file"]),
+html.dark select,
+html.dark textarea {
+    background-color: #1e293b !important;
+    border-color: #475569 !important;
+    color: #f8fafc !important;
+}
+html.dark input::placeholder,
+html.dark textarea::placeholder {
+    color: #64748b !important;
+}
+
+/* Tag/Badge warna hijau perpustakaan di Dark Mode */
+html.dark [class*="bg-[#e8f5ed]"],
+html.dark [class*="bg-[#eef7f2]"],
+html.dark [class*="bg-[#f0fdf4]"] {
+    background-color: rgba(6, 78, 59, 0.4) !important;
+    border-color: rgba(16, 185, 129, 0.3) !important;
+    color: #6ee7b7 !important;
+}
+
+/* Tag/Badge warna peringatan kuning/amber di Dark Mode */
+html.dark [class*="bg-[#fef3c7]"],
+html.dark [class*="bg-[#fefce8]"] {
+    background-color: rgba(120, 53, 15, 0.4) !important;
+    border-color: rgba(245, 158, 11, 0.3) !important;
+    color: #fcd34d !important;
+}
+
+/* Tag/Badge warna bahaya merah di Dark Mode */
+html.dark [class*="bg-[#fef2f2]"],
+html.dark [class*="bg-[#fee2e2]"] {
+    background-color: rgba(127, 29, 29, 0.4) !important;
+    border-color: rgba(239, 68, 68, 0.3) !important;
+    color: #fca5a5 !important;
+}
+
+/* Dialog / Modal container */
+html.dark [role="dialog"],
+html.dark .modal-content {
+    background-color: #0f172a !important;
+    border-color: #334155 !important;
+    color: #f1f5f9 !important;
+}
+
+/* Print utilities for official documents & labels */
+@media print {
+    html, body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        filter: none !important;
+    }
+    html.dark body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    html.dark .bg-white,
+    html.dark [class*="bg-"] {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    html.dark [class*="text-"] {
+        color: #000000 !important;
+    }
+    .no-print {
+        display: none !important;
+    }
+    .print-only {
+        display: block !important;
+    }
+    .page-break {
+        page-break-after: always;
+        break-after: page;
+    }
+}
