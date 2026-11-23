@@ -17,7 +17,11 @@ return [
     |
     */
 
-    'default' => env('DB_CONNECTION', 'sqlite'),
+    'default' => env('DB_CONNECTION', match (true) {
+        ! empty(env('MYSQL_URL')) || ! empty(env('MYSQLHOST')) => 'mysql',
+        ! empty(env('PGHOST')) || (! empty(env('DATABASE_URL')) && str_starts_with((string) env('DATABASE_URL'), 'postgres')) => 'pgsql',
+        default => 'sqlite',
+    }),
 
     /*
     |--------------------------------------------------------------------------
@@ -46,12 +50,12 @@ return [
 
         'mysql' => [
             'driver' => 'mysql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '3306'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'url' => env('DB_URL', env('MYSQL_URL', env('DATABASE_URL'))),
+            'host' => env('DB_HOST', env('MYSQLHOST', '127.0.0.1')),
+            'port' => env('DB_PORT', env('MYSQLPORT', '3306')),
+            'database' => env('DB_DATABASE', env('MYSQLDATABASE', 'laravel')),
+            'username' => env('DB_USERNAME', env('MYSQLUSER', 'root')),
+            'password' => env('DB_PASSWORD', env('MYSQLPASSWORD', '')),
             'unix_socket' => env('DB_SOCKET', ''),
             'charset' => env('DB_CHARSET', 'utf8mb4'),
             'collation' => env('DB_COLLATION', 'utf8mb4_unicode_ci'),
@@ -86,12 +90,12 @@ return [
 
         'pgsql' => [
             'driver' => 'pgsql',
-            'url' => env('DB_URL'),
-            'host' => env('DB_HOST', '127.0.0.1'),
-            'port' => env('DB_PORT', '5432'),
-            'database' => env('DB_DATABASE', 'laravel'),
-            'username' => env('DB_USERNAME', 'root'),
-            'password' => env('DB_PASSWORD', ''),
+            'url' => env('DB_URL', env('DATABASE_URL')),
+            'host' => env('DB_HOST', env('PGHOST', '127.0.0.1')),
+            'port' => env('DB_PORT', env('PGPORT', '5432')),
+            'database' => env('DB_DATABASE', env('PGDATABASE', 'laravel')),
+            'username' => env('DB_USERNAME', env('PGUSER', 'root')),
+            'password' => env('DB_PASSWORD', env('PGPASSWORD', '')),
             'charset' => env('DB_CHARSET', 'utf8'),
             'prefix' => '',
             'prefix_indexes' => true,
